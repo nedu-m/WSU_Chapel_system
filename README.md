@@ -74,7 +74,7 @@ ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 # Development mode with auto-restart
 npm run dev
 
-# Or standard development
+# Or standard development  
 npm run start:dev
 ```
 
