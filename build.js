@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 // Get the current file's directory
 const __filename = fileURLToPath(import.meta.url);
@@ -59,6 +60,23 @@ fs.writeFileSync(path.join(distDir, 'package.json'), JSON.stringify(packageJson,
 const envPath = path.join(__dirname, '.env');
 if (fs.existsSync(envPath)) {
     fs.copyFileSync(envPath, path.join(distDir, '.env'));
+}
+
+// Install dependencies in dist directory
+console.log('📦 Installing production dependencies...');
+const originalDir = process.cwd();
+
+try {
+    // Change to dist directory and install dependencies
+    process.chdir(distDir);
+    execSync('npm install --production', { stdio: 'inherit' });
+    console.log('✅ Dependencies installed successfully');
+} catch (error) {
+    console.error('❌ Failed to install dependencies:', error.message);
+    process.exit(1);
+} finally {
+    // Return to original directory
+    process.chdir(originalDir);
 }
 
 console.log('✅ Build complete! Output in ./dist');
