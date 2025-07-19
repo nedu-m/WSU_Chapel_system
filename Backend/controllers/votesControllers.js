@@ -117,7 +117,7 @@ export const voteUser = async (req, res) => {
 // Function to get all nominees for a specific vote
 // This will return the vote category, start time, end time, and nominees with their names
 export const getNominees = async (req, res) => {
-  const { voteId } = req.params;
+    const { voteId } = req.params;
   try {
 
     const vote = await Vote.findById(voteId).populate("nominees.user", "firstName lastName profileImg");
@@ -141,20 +141,20 @@ export const getNominees = async (req, res) => {
 
 // getNominees controller
 export const getUserNominees = async (req, res) => {
-  try {
+ try {
     const userId = req.user?._id;
-
+    
     // Fetch votes with populated nominees and user details
     const votes = await Vote.find()
-      .populate({
-        path: 'nominees.user',
-        select: 'firstName lastName profileImg position department'
-      })
-      .populate({
-        path: 'voters',
-        select: '_id'
-      })
-      .lean();
+    .populate({
+      path: 'nominees.user',
+      select: 'firstName lastName profileImg position department'
+    })
+    .populate({
+      path: 'voters',
+      select: '_id'
+    })
+    .lean();
 
     // Add userHasVoted status for each vote
     const votesWithStatus = votes.map(vote => ({
@@ -304,17 +304,17 @@ export const deleteVoteCategory = async (req, res) => {
   const { voteId } = req.params;
 
   try {
-    const voteCategory = await Vote.findByIdAndDelete(voteId);
+        const voteCategory = await Vote.findByIdAndDelete(voteId);
 
     if (!voteCategory) {
       return res.status(400).json({ message: "Vote Category was not found" });
-    }
+        }
 
     res.status(200).json({ message: "Vote category was deleted successfully " })
 
   } catch (error) {
 
-  }
+    }
 }
 
 export const getVoteStatus = async (req, res) => {
@@ -371,7 +371,7 @@ export const getWinners = async (req, res) => {
     });
 
     const winners = {};
-
+    
     for (const vote of votes) {
       // If winner is already set in the vote document, use that
       if (vote.winner) {
@@ -387,11 +387,11 @@ export const getWinners = async (req, res) => {
 
       // Otherwise calculate winner from nominees
       if (vote.nominees.length === 0) continue;
-
-      const winner = vote.nominees.reduce((prev, current) =>
+      
+      const winner = vote.nominees.reduce((prev, current) => 
         (prev.voteCount > current.voteCount) ? prev : current
       );
-
+      
       winners[vote._id] = {
         user: winner.user,
         voteCount: winner.voteCount,
@@ -401,16 +401,16 @@ export const getWinners = async (req, res) => {
       };
     }
 
-    res.status(200).json({
-      success: true,
-      winners: Object.entries(winners).map(([voteId, winnerData]) => ({
-        voteId,
-        user: winnerData.user,
-        voteCount: winnerData.voteCount,
-        percentage: winnerData.percentage,
-        category: winnerData.category
-      }))
-    });
+   res.status(200).json({
+  success: true,
+  winners: Object.entries(winners).map(([voteId, winnerData]) => ({
+    voteId,
+    user: winnerData.user,
+    voteCount: winnerData.voteCount,
+    percentage: winnerData.percentage,
+    category: winnerData.category
+  }))
+});
   } catch (error) {
     console.error("Error getting winners:", error);
     res.status(500).json({
@@ -546,7 +546,7 @@ export const getAllVotingCategoriesAdmin = async (req, res) => {
     const now = new Date();
     const votesWithCountdown = votes.map(vote => {
       const timeRemaining = Math.max(0, new Date(vote.endTime) - now);
-
+      
       return {
         ...vote.toObject(),
         countdown: {
@@ -594,7 +594,7 @@ export const publishVotingResults = async (req, res) => {
       return res.status(400).json({ message: "No nominees in this voting category." });
     }
 
-    const winner = vote.nominees.reduce((prev, current) =>
+    const winner = vote.nominees.reduce((prev, current) => 
       (prev.voteCount > current.voteCount) ? prev : current
     );
 
@@ -680,7 +680,7 @@ export const getAllWinnersAdmin = async (req, res) => {
 
       // Calculate percentage
       const totalVotes = vote.nominees.reduce((sum, n) => sum + n.voteCount, 0);
-      const percentage = totalVotes > 0
+      const percentage = totalVotes > 0 
         ? ((topNominee.voteCount / totalVotes) * 100).toFixed(2)
         : 0;
 
