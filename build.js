@@ -1,8 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const sourceDir = './backend';
-const distDir = './dist';
+// Get the current file's directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Use absolute paths relative to the script location
+const sourceDir = path.join(__dirname, 'backend');
+const distDir = path.join(__dirname, 'dist');
 
 // Clean dist directory
 if (fs.existsSync(distDir)) {
@@ -30,16 +36,29 @@ function copyDir(src, dest) {
 }
 
 console.log('🏗️  Building production bundle...');
+console.log('📁 Source directory:', sourceDir);
+console.log('📁 Dist directory:', distDir);
+console.log('📁 Working directory:', process.cwd());
+
+// Check if source directory exists
+if (!fs.existsSync(sourceDir)) {
+    console.error('❌ Source directory does not exist:', sourceDir);
+    console.log('📋 Available directories:', fs.readdirSync(__dirname));
+    process.exit(1);
+}
+
 copyDir(sourceDir, distDir);
 
 // Copy package.json with updated paths and other necessary files
-const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+const packageJsonPath = path.join(__dirname, 'package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 packageJson.main = 'api/index.js';
 packageJson.scripts.start = 'node api/index.js';
-fs.writeFileSync('./dist/package.json', JSON.stringify(packageJson, null, 2));
+fs.writeFileSync(path.join(distDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-if (fs.existsSync('./.env')) {
-    fs.copyFileSync('./.env', './dist/.env');
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+    fs.copyFileSync(envPath, path.join(distDir, '.env'));
 }
 
 console.log('✅ Build complete! Output in ./dist');
