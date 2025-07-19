@@ -1,4 +1,4 @@
-import Announcement from "../models/AnnouncementModel.js";
+import Announcement from "../models/announcementModel.js";
 import fs from "fs";
 import path from "path";
 // import { batchCreateNotifications } from "../lib/utils/notificationUtils.js";
@@ -13,18 +13,18 @@ export const createAnnouncement = async (req, res) => {
     //   });
     // }
 
-    const { 
-      title, 
-      content, 
-      fullContent, 
-      author, 
+    const {
+      title,
+      content,
+      fullContent,
+      author,
       // date, 
-      category, 
+      category,
       pinned = false,
       priority,
       // tags = [] 
     } = req.body;
-    
+
     // const createdBy = req.user._id;
 
     // Required fields validation
@@ -34,7 +34,7 @@ export const createAnnouncement = async (req, res) => {
       .map(([key]) => key);
 
     if (missingFields.length > 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: `Missing required fields: ${missingFields.join(', ')}`,
         missingFields
       });
@@ -51,7 +51,7 @@ export const createAnnouncement = async (req, res) => {
     // Category validation
     const validCategories = ['general', 'event', 'urgent', 'community'];
     if (!validCategories.includes(category)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: `Invalid category. Must be one of: ${validCategories.join(', ')}`,
         received: category
       });
@@ -78,7 +78,7 @@ export const createAnnouncement = async (req, res) => {
     // Notification logic
     // try {
     //   let recipientUserIds = [];
-      
+
     //   if (category === 'urgent') {
     //     const activeUsers = await User.find({ isActive: true }).select('_id');
     //     recipientUserIds = activeUsers.map(user => user._id);
@@ -132,11 +132,11 @@ export const createAnnouncement = async (req, res) => {
         console.error("Error deleting uploaded file:", fileError);
       }
     }
-    
-    return res.status(500).json({ 
+
+    return res.status(500).json({
       success: false,
       error: "Internal server error",
-      message: error.message 
+      message: error.message
     });
   }
 };
@@ -145,7 +145,7 @@ export const getAllAnnouncements = async (req, res) => {
   try {
     const { category, pinned, search } = req.query;
     const filter = {};
-    
+
     if (category) filter.category = category;
     if (pinned) filter.pinned = pinned === 'true';
     if (search) {
@@ -154,7 +154,7 @@ export const getAllAnnouncements = async (req, res) => {
 
     const announcements = await Announcement.find(filter)
       .sort({ pinned: -1, date: -1, createdAt: -1 });
-      
+
     res.status(200).json(announcements);
   } catch (error) {
     console.error("Error fetching announcements:", error.message);
@@ -188,10 +188,10 @@ export const getAllAnnouncementsAdmin = async (req, res) => {
     res.status(200).json(announcementsWithId);
   } catch (error) {
     console.error("Error fetching admin announcements:", error.message);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       error: "Internal server error",
-      message: error.message 
+      message: error.message
     });
   }
 };
@@ -201,7 +201,7 @@ export const getUserAnnouncements = async (req, res) => {
   try {
     // Get announcements based on user preferences
     const user = await User.findById(req.user._id);
-    
+
     const filter = {
       $or: [
         { category: 'general' },
@@ -228,7 +228,7 @@ export const getUserAnnouncements = async (req, res) => {
 export const getAnnouncementById = async (req, res) => {
   try {
     const { id } = req.params;
-    const announcement = await Announcement.findById(id); 
+    const announcement = await Announcement.findById(id);
 
     if (!announcement) {
       return res.status(404).json({ message: "Announcement not found." });
@@ -248,7 +248,7 @@ export const updateAnnouncement = async (req, res) => {
     const updates = req.body;
 
     // ✅ Fetch existing document
-   const existingAnnouncement = await Announcement.findByIdAndUpdate(id);
+    const existingAnnouncement = await Announcement.findByIdAndUpdate(id);
 
     if (!existingAnnouncement) {
       if (req.file?.path) fs.unlinkSync(req.file.path);
@@ -297,7 +297,7 @@ export const updateAnnouncement = async (req, res) => {
 export const togglePinAnnouncement = async (req, res) => {
   try {
     const announcement = await Announcement.findById(req.params.id);
-    
+
     if (!announcement) {
       return res.status(404).json({
         success: false,

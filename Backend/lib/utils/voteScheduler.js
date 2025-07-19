@@ -1,13 +1,13 @@
 // utils/voteScheduler.js
 // import Vote from "../../models/voteModel.js";
 import { scheduleJob } from 'node-schedule';
-import Vote from '../../models/VoteModel.js';
+import Vote from '../../models/voteModel.js';
 
 // Function to process ended votes
 export const processEndedVotes = async () => {
   try {
     const now = new Date();
-    
+
     // Find votes that have ended but haven't had results published
     const endedVotes = await Vote.find({
       endTime: { $lte: now },
@@ -32,15 +32,15 @@ const determineAndSaveWinner = async (vote) => {
   }
 
   // Find the nominee with highest votes
-  const topNominee = vote.nominees.reduce((max, current) => 
-    current.voteCount > max.voteCount ? current : max, 
+  const topNominee = vote.nominees.reduce((max, current) =>
+    current.voteCount > max.voteCount ? current : max,
     vote.nominees[0]
   );
 
   // Update the vote with winner and mark as published
   vote.winner = topNominee.user._id;
   vote.resultPublished = true;
-  
+
   await vote.save();
   console.log(`Winner determined for vote ${vote._id}: ${topNominee.user._id}`);
 };
@@ -49,14 +49,14 @@ const determineAndSaveWinner = async (vote) => {
 export const startVoteProcessingScheduler = () => {
   // Run immediately on startup
   processEndedVotes();
-  
+
   // Then run every hour
   scheduleJob('0 * * * *', processEndedVotes);
   console.log('Vote processing scheduler started');
-  
+
 };
 
 // In your voteScheduler.js
 export const isSchedulerRunning = () => {
-    return !!global.voteSchedulerJob;
+  return !!global.voteSchedulerJob;
 };
