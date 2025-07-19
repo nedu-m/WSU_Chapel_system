@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Use absolute paths relative to the script location
-const sourceDir = path.join(__dirname, 'backend');
+const sourceDir = path.join(__dirname, 'Backend');
 const distDir = path.join(__dirname, 'dist');
 
 // Clean dist directory
