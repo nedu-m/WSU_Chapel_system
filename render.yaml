@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: wellspring-voting-backend
+    env: node
+    buildCommand: npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    # Add your environment variables here
+    # - key: MONGODB_URI
+    #   fromDatabase:
+    #     name: wellspring-voting-db
+    #     property: connectionString
+    # - key: JWT_SECRET
+    #   generateValue: true
+    # - key: SESSION_SECRET
+    #   generateValue: true
+
+# Uncomment if you need a MongoDB database
+# databases:
+#   - name: wellspring-voting-db
+#     databaseName: wellspring_voting
+#     user: wellspring_user
