@@ -32,8 +32,12 @@ function copyDir(src, dest) {
 console.log('🏗️  Building production bundle...');
 copyDir(sourceDir, distDir);
 
-// Copy package.json and other necessary files
-fs.copyFileSync('./package.json', './dist/package.json');
+// Copy package.json with updated paths and other necessary files
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+packageJson.main = 'api/index.js';
+packageJson.scripts.start = 'node api/index.js';
+fs.writeFileSync('./dist/package.json', JSON.stringify(packageJson, null, 2));
+
 if (fs.existsSync('./.env')) {
     fs.copyFileSync('./.env', './dist/.env');
 }

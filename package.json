@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon backend/api/index.js",
     "start": "node backend/api/index.js",
+    "start:prod": "node dist/api/index.js",
     "build": "node build.js"
   },
   "author": "",
