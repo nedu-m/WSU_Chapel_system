@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const sourceDir = './Backend';
+const sourceDir = './backend';
 const distDir = './dist';
 
 // Clean dist directory
